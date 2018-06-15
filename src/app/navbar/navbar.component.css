@@ -1,0 +1,57 @@
+.sidenav-overlay {
+  display: none !important;
+}
+
+ul img {
+  width: 35px;
+  margin-right: .5em;
+}
+
+.flex-container {
+  display: flex;
+  height: 64px;
+  justify-content: center;
+  align-items: center;
+}
+
+.header {
+  margin-top: 2.5em;
+}
+
+nav {
+  position: relative;
+  background-image: url(//source.unsplash.com/1600x200?sunrise);
+  background-size: cover;
+  background-position: center;
+  height: 200px;
+}
+
+.nav-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.45);
+  text-align: center;
+}
+
+label {
+  line-height: 1.5;
+  font-size: 2em;
+  margin-top: .5em;
+}
+
+.active {
+  background-color: rgba(0,0,0,0.2);
+}
+
+@media(max-width: 560px) {
+  label {
+    font-size: 1.5em;
+  }
+
+  nav {
+    height: 150px;
+  }
+}

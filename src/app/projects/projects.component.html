@@ -1,0 +1,30 @@
+<app-navbar></app-navbar>
+<div class="container fade">
+  <div *ngIf="saving" class="save-container overlay">
+    <app-spinner></app-spinner>
+  </div>
+  <div *ngIf="loading" class="preloader-container fade">
+      <div>
+        <h4>Loading Your Project List...</h4>
+      </div>
+      <app-spinner></app-spinner>
+    </div>
+  <div class="row mt-5">
+    <div class="col s12 m6 offset-m3">
+      <ul class="collection">
+        <li class="collection-item pointer" *ngFor="let project of projects" (click)="setSelectedProject(project.id)">
+          <div>{{ project.title }}
+            <i *ngIf="selectedProject !== project.id" class="material-icons red-text secondary-content pointer" (click)="deleteProject(project.id)">delete</i>
+            <i *ngIf="selectedProject === project.id" class="material-icons secondary-content">check</i>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="row">
+    <div class="input-field col s12 m6 offset-m3">
+      <input type="text" [(ngModel)]="title" (keyup.enter)="addProject()">
+      <label for="item">Add a Project</label>
+    </div>
+  </div>
+</div>

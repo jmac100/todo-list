@@ -1,0 +1,41 @@
+<nav class="transparent">
+  <div class="nav-wrapper">
+    <label *ngIf="page === '/todos'" href="#!" class="brand-logo center">{{ profile.userName.split(' ')[0] }}'s To Do List
+      <br> for
+      <br> {{ today | date:'fullDate' }}</label>
+    <label *ngIf="page === '/projects'" href="#!" class="brand-logo center header">Project Administration</label>
+    <a href="#" data-target="mobile-demo" class="sidenav-trigger">
+      <i class="material-icons">menu</i>
+    </a>
+    <ul *ngIf="auth.isAuthenticated()" id="nav-mobile" class="right hide-on-med-and-down">
+      <li class="flex-container">
+        <img [src]="profile.avatar" class="circle">
+      </li>
+      <li>{{ profile.userName }}</li>
+      <li>
+        <a routerLink="/projects" routerLinkActive="active">Projects</a>
+      </li>
+      <li>
+        <a routerLink="/todos" routerLinkActive="active">List</a>
+      </li>
+      <li>
+        <a href="#!" (click)="auth.logout()">Logout</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+<ul class="sidenav" id="mobile-demo">
+  <li class="flex-container">
+    <img [src]="profile.avatar" class="circle">
+  </li>
+  <li class="center">Logged in as {{ profile.userName }}</li>
+  <li>
+    <a (click)="linkClicked()" routerLink="/projects" routerLinkActive="active">Projects</a>
+  </li>
+  <li>
+    <a (click)="linkClicked()" routerLink="/todos" routerLinkActive="active">List</a>
+  </li>
+  <li>
+    <a (click)="linkClicked()" href="#!" (click)="auth.logout()">Logout</a>
+  </li>
+</ul>

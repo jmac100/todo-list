@@ -1,0 +1,83 @@
+<app-navbar></app-navbar>
+<div id="body">
+  <div *ngIf="saving" class="save-container overlay">
+    <app-spinner></app-spinner>
+  </div>
+  <div *ngIf="loading" class="preloader-container fade">
+    <div>
+      <h4>Loading Your To Do List...</h4>
+    </div>
+    <app-spinner></app-spinner>
+  </div>
+  <div *ngIf="!loading" class="row">
+    <div *ngIf="projects.length > 1" class="input-field col s12 m6 offset-m6 l3 offset-l9">
+      <select [(ngModel)]="selectedProject" (change)="selectedProjectChanged()">
+        <option *ngFor="let project of projects" [value]="project.id">{{ project.title }}</option>
+      </select>
+      <label>Select a Project</label>
+    </div>
+  </div>
+  <main *ngIf="!loading" id="main" class="container fade">
+    <div *ngIf="todos">
+      <div class="row">
+        <div class="col s12 m10 offset-m1">
+            <ul [sortablejs]="items" [sortablejsOptions]="options">
+                <li *ngFor="let todo of todos" id="{{ todo.id }}" class="todo-container">
+                  <div class="row">
+                    <div class="col s1">
+                      <i *ngIf="!todo.complete" [class.disabled]="editId" class="material-icons pointer" (click)="setTodoComplete(todo)">check_box_outline_blank</i>
+                      <i *ngIf="todo.complete" class="material-icons pointer green-text" (click)="setTodoComplete(todo)">check_box</i>
+                    </div>
+                    <div class="col s9 l10 todo" [class.completed]="todo.complete" (click)="setTodoComplete(todo)">
+                      <span *ngIf="todo.id !== editId">{{ todo.title }}</span>
+                      <div *ngIf="todo.id === editId" class="row">
+                        <div class="input-field col s12">
+                          <input type="text" #editTitle [value]="todo.title" placeholder="Edit item..." (keyup.enter)="editTodo(todo.id, editTitle.value)">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col s2 l1 flex-container-center">
+                      <i *ngIf="!todo.complete && todo.id !== editId" class="material-icons pointer green-text" (click)="toggleEditMode(todo.id)">edit</i>
+                      <i *ngIf="!todo.complete && todo.id === editId" class="material-icons pointer red-text" (click)="toggleEditMode(0)">cancel</i>
+                      <i *ngIf="todo.complete" class="material-icons pointer red-text" (click)="delete(todo)">delete</i>
+                    </div>
+                  </div>
+                  <ul class="collapsible popout">
+                    <li>
+                      <div class="collapsible-header indigo-text" [class.has-notes]="todo.notes.length > 0">Notes</div>
+                      <div class="collapsible-body">
+                        <div class="row">
+                          <div class="input-field col s12">
+                            <textarea #notes id="notes{{todo.id}}" class="materialize-textarea" [value]="todo.notes"></textarea>
+                            <label [class.active]="todo.notes" for="notes">Add notes...</label>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col s12 right-align">
+                            <i class="material-icons pointer" (click)="edit(todo.id, notes.value)">add_circle_outline</i>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                  <div class="row">
+                    <div class="col s2 offset-s10 l1 offset-l11 flex-container-center">
+                      {{ todo.ordinal }}
+                      <i class="material-icons my-handle pointer">drag_handle</i>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="this.selectedProject != ''" class="container">
+      <div class="row">
+        <div class="input-field col s12 flex-container-center">
+          <input type="text" id="item" [(ngModel)]="item" (keyup.enter)="addItem()">
+          <label for="item">Add a Todo Item</label>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
