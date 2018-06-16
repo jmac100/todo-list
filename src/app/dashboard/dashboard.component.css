@@ -66,3 +66,9 @@ h5 {
 .disabled {
   opacity: .2;
 }
+
+@media(max-width: 560px) {
+  h4 {
+    font-size: 1.75em;
+  }
+}

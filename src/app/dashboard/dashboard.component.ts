@@ -48,7 +48,6 @@ export class DashboardComponent implements OnInit, AfterViewChecked, AfterViewIn
       this.todos.forEach(todo => {
         resizeTextArea(todo.id)
       })
-      select()
     }, 500);
   }
 
@@ -100,14 +99,12 @@ export class DashboardComponent implements OnInit, AfterViewChecked, AfterViewIn
             this.cache.setProject(res.data.addProject.id)
             this.selectedProject = this.cache.getProject()      
             this.loadItems() 
-            select()     
           });
         } else {
           if (this.selectedProject === '') {
             if (this.projects.length > 0){
               this.cache.setProject(this.projects[0].id.toString())
               this.selectedProject = this.cache.getProject()
-              select()
             }
           }
           this.loadItems()

@@ -16,5 +16,7 @@ export function resizeTextArea(id) {
 }
 
 export function select() {
-  M.FormSelect.init(document.querySelectorAll(`select`))
+  setTimeout(() => {
+    M.FormSelect.init(document.querySelectorAll(`select`))
+  }, 500);
 }

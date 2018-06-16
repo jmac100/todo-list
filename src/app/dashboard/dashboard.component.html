@@ -3,7 +3,7 @@
   <div *ngIf="saving" class="save-container overlay">
     <app-spinner></app-spinner>
   </div>
-  <div *ngIf="loading" class="preloader-container fade">
+  <div *ngIf="!loading" class="preloader-container fade">
     <div>
       <h4>Loading Your To Do List...</h4>
     </div>
