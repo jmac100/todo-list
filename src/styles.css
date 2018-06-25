@@ -3,6 +3,10 @@
   cursor: pointer;
 }
 
+.default {
+  cursor: default;
+}
+
 .fade {
   animation: fadein 1s;
 }

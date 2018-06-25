@@ -37,6 +37,7 @@
                       </div>
                     </div>
                     <div class="col s2 l1 flex-container-center">
+                      <i materialize="tooltip" *ngIf="!todo.complete && todo.dueDate" id="tip{{todo.id}}" class="material-icons default tooltipped" [ngClass]="getAlarmColor(todo)" attr.data-tooltip="Due Date: {{todo.dueDate}}" data-position="left">alarm</i>
                       <i *ngIf="!todo.complete && todo.id !== editId" class="material-icons pointer green-text" (click)="toggleEditMode(todo.id)">edit</i>
                       <i *ngIf="!todo.complete && todo.id === editId" class="material-icons pointer red-text" (click)="toggleEditMode(0)">cancel</i>
                       <i *ngIf="todo.complete" class="material-icons pointer red-text" (click)="delete(todo)">delete</i>
@@ -44,7 +45,7 @@
                   </div>
                   <ul class="collapsible popout">
                     <li>
-                      <div class="collapsible-header indigo-text" [class.has-notes]="todo.notes.length > 0">Notes</div>
+                      <div class="collapsible-header indigo-text" [class.has-notes]="todo.notes.length > 0 || todo.dueDate">More...</div>
                       <div class="collapsible-body">
                         <div class="row">
                           <div class="input-field col s12">
@@ -53,8 +54,14 @@
                           </div>
                         </div>
                         <div class="row">
+                          <div class="input-field col s12">
+                              <input #dueDate id="date{{todo.id}}" type="text" class="datepicker" value="{{todo.dueDate}}">
+                              <label [class.active]="todo.dueDate" for="dueDate">Set a Due Date</label>
+                          </div>
+                        </div>
+                        <div class="row">
                           <div class="col s12 right-align">
-                            <i class="material-icons pointer" (click)="edit(todo.id, notes.value)">add_circle_outline</i>
+                            <i class="material-icons pointer" (click)="edit(todo.id, notes.value, dueDate.value)">add_circle_outline</i>
                           </div>
                         </div>
                       </div>

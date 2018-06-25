@@ -1,9 +1,17 @@
 import { Component, OnInit, AfterViewChecked, AfterViewInit } from '@angular/core';
 import { Apollo } from "apollo-angular";
 import { map } from "rxjs/operators";
-import { Observable } from "rxjs/Observable";
+import * as moment from 'moment';
+
 import { CacheService } from "../services";
-import { sideNav, collapse, resizeTextArea, select } from "../../mat";
+import { 
+  sideNav, 
+  collapse, 
+  resizeTextArea, 
+  select,
+  datePicker,
+  setDate,
+  tooltip } from "../../mat";
 import { _ } from 'underscore';
 
 import { Item, Query, Mutation, Project } from "../../api/types";
@@ -44,9 +52,15 @@ export class DashboardComponent implements OnInit, AfterViewChecked, AfterViewIn
   }
 
   ngAfterViewInit() {
+    this.initMatComponents()
+  }
+
+  initMatComponents(){
     setTimeout(() => {
       this.todos.forEach(todo => {
         resizeTextArea(todo.id)
+        datePicker(todo.id)
+        tooltip(todo.id)
       })
     }, 500);
   }
@@ -127,6 +141,10 @@ export class DashboardComponent implements OnInit, AfterViewChecked, AfterViewIn
         this.todos = t
         this.loading = false
         select()
+
+        this.todos.forEach(todo => {
+          setDate(todo.id, todo.dueDate)
+        })
       })
   }
 
@@ -169,7 +187,8 @@ export class DashboardComponent implements OnInit, AfterViewChecked, AfterViewIn
         complete: false,
         ordinal: newOrdinal,
         ownerId: this.profile.userId,
-        projectId: this.selectedProject
+        projectId: this.selectedProject,
+        dueDate: ''
       },
       refetchQueries: [{
         query: itemsQuery,
@@ -180,6 +199,7 @@ export class DashboardComponent implements OnInit, AfterViewChecked, AfterViewIn
     }).subscribe(() => {
       this.item = ''
       this.saving = false
+      this.initMatComponents();
     })
   }
 
@@ -206,13 +226,14 @@ export class DashboardComponent implements OnInit, AfterViewChecked, AfterViewIn
     }).subscribe(() => this.saving = false)
   }
 
-  edit(id, notes) {
+  edit(id, notes, dueDate) {   
     this.saving = true
     this.apollo.mutate<Mutation>({
       mutation: editItemMutation,
       variables: {
         id: id,
-        notes: notes
+        notes: notes,
+        dueDate: dueDate
       },
       refetchQueries: [{
         query: itemsQuery,
@@ -220,7 +241,10 @@ export class DashboardComponent implements OnInit, AfterViewChecked, AfterViewIn
           projectId: this.selectedProject
         }
       }]
-    }).subscribe(() => this.saving = false)
+    }).subscribe(() => {
+      this.saving = false
+      this.initMatComponents()
+    })
   }
 
   editTodo(id, title) {
@@ -259,5 +283,16 @@ export class DashboardComponent implements OnInit, AfterViewChecked, AfterViewIn
         }
       }]
     }).subscribe(() => this.saving = false)
+  }
+
+  getAlarmColor(todo) {
+    const diff = moment(todo.dueDate, 'MM-DD-YYYY').diff(moment(new Date(), 'MM-DD-YYYY'), 'days')
+    if (diff > 5) {
+      return 'green-text'
+    } else if (diff >= 2) {
+      return 'yellow-text'
+    } else {
+      return 'red-text'
+    }
   }
 }

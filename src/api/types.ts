@@ -10,7 +10,8 @@ export type Item = {
   notes: string
   complete: boolean
   ordinal: number
-  ownerId: string
+  ownerId: string,
+  dueDate: string
 }
 
 export type Query = {

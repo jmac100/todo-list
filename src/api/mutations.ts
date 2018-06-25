@@ -21,8 +21,8 @@ const deleteProjectMutation = gql`
 `
 
 const addItemMutation = gql`
-  mutation addItem($title: String!, $notes: String, $complete: Boolean, $ordinal: Int!, $ownerId: ID!, $projectId: ID!) {
-    addItem(title: $title, notes: $notes, complete: $complete, ordinal: $ordinal, ownerId: $ownerId, projectId: $projectId) {
+  mutation addItem($title: String!, $notes: String, $complete: Boolean, $ordinal: Int!, $ownerId: ID!, $projectId: ID!, $dueDate: String) {
+    addItem(title: $title, notes: $notes, complete: $complete, ordinal: $ordinal, ownerId: $ownerId, projectId: $projectId, dueDate: $dueDate) {
       id
       title
       notes
@@ -30,13 +30,14 @@ const addItemMutation = gql`
       ordinal
       ownerId
       projectId
+      dueDate
     }
   }
 `
 
 const editItemMutation = gql`
-  mutation editItem($id: ID!, $title: String, $notes: String, $complete: Boolean, $ordinal: Int) {
-    editItem(id: $id, title: $title, notes: $notes, complete: $complete, ordinal: $ordinal) {
+  mutation editItem($id: ID!, $title: String, $notes: String, $complete: Boolean, $ordinal: Int, $dueDate: String) {
+    editItem(id: $id, title: $title, notes: $notes, complete: $complete, ordinal: $ordinal, dueDate: $dueDate) {
       id
       title
       notes
@@ -44,6 +45,7 @@ const editItemMutation = gql`
       ordinal
       ownerId
       projectId
+      dueDate
     }
   }
 `
@@ -58,6 +60,7 @@ const deleteItemMutation = gql`
       ordinal
       ownerId
       projectId
+      dueDate
     }
   }
 `
@@ -71,6 +74,7 @@ const deleteAllItemsByOwnerMutation = gql`
       complete
       ordinal
       ownerId
+      dueDate
     }
   }
 `

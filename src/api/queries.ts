@@ -19,6 +19,7 @@ const itemQuery = gql`
       complete
       ordinal
       ownerId
+      dueDate
     }
   }
 `
@@ -31,8 +32,9 @@ const itemsQuery = gql`
       notes
       complete
       ordinal
-      ownerId,
+      ownerId
       projectId
+      dueDate
     }
   }
 `
