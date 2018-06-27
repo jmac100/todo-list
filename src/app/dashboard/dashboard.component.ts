@@ -149,6 +149,7 @@ export class DashboardComponent implements OnInit, AfterViewChecked, AfterViewIn
   }
 
   selectedProjectChanged() {
+    this.loading = true
     this.cache.setProject(this.selectedProject)
     this.loadItems()
     this.initMatComponents()
