@@ -151,6 +151,7 @@ export class DashboardComponent implements OnInit, AfterViewChecked, AfterViewIn
   selectedProjectChanged() {
     this.cache.setProject(this.selectedProject)
     this.loadItems()
+    this.initMatComponents()
   }
 
   updateOrdinal(id, ordinal, up) {
