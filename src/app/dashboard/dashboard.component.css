@@ -75,4 +75,7 @@ h5 {
   h4 {
     font-size: 1.75em;
   }
+  #scrollTarget {
+    margin-top: 145px;
+  }
 }
