@@ -1,7 +1,10 @@
-import { Component, OnInit, AfterViewChecked, AfterViewInit } from '@angular/core';
+import { Component, Inject, OnInit, AfterViewChecked, AfterViewInit } from '@angular/core';
+import { DOCUMENT} from '@angular/common';
 import { Apollo } from "apollo-angular";
 import { map } from "rxjs/operators";
 import * as moment from 'moment';
+import { PageScrollConfig, PageScrollService, PageScrollInstance } from 'ngx-page-scroll';
+
 
 import { CacheService } from "../services";
 import { 
@@ -34,7 +37,9 @@ export class DashboardComponent implements OnInit, AfterViewChecked, AfterViewIn
   constructor
     (
     private apollo: Apollo,
-    private cache: CacheService
+    private cache: CacheService,
+    private pageScrollService: PageScrollService, 
+    @Inject(DOCUMENT) private document: any
     ) { }
 
   profile: any
@@ -202,6 +207,7 @@ export class DashboardComponent implements OnInit, AfterViewChecked, AfterViewIn
       this.item = ''
       this.saving = false
       this.initMatComponents();
+      this.scrollToBottom()
     })
   }
 
@@ -296,5 +302,10 @@ export class DashboardComponent implements OnInit, AfterViewChecked, AfterViewIn
     } else {
       return 'red-text'
     }
+  }
+
+  scrollToBottom() {
+    let pageScrollInstance: PageScrollInstance = PageScrollInstance.simpleInstance(this.document, '#scrollTarget');
+    this.pageScrollService.start(pageScrollInstance);
   }
 }

@@ -6,6 +6,7 @@ import { HttpClientModule } from "@angular/common/http";
 import { ApolloModule, Apollo } from "apollo-angular";
 import { HttpLinkModule, HttpLink } from "apollo-angular-link-http";
 import { InMemoryCache } from "apollo-cache-inmemory";
+import { NgxPageScrollModule } from "ngx-page-scroll";
 
 import { environment } from "../environments/environment";
 
@@ -40,6 +41,7 @@ import { ProjectsComponent } from './projects/projects.component';
     HttpClientModule,
     ApolloModule,
     HttpLinkModule,
+    NgxPageScrollModule,
     SortablejsModule.forRoot({
       animation: 200,
       handle: ".my-handle",
