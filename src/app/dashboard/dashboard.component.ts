@@ -147,7 +147,9 @@ export class DashboardComponent implements OnInit, AfterViewChecked, AfterViewIn
       variables: {
         projectId
       }
-    }).subscribe(t => this.counts[projectId] = t.data.items.length)
+    }).subscribe(t => {
+      this.counts[projectId] = t.data.items.length
+    })
   }
 
   loadItems() {
@@ -230,6 +232,7 @@ export class DashboardComponent implements OnInit, AfterViewChecked, AfterViewIn
       this.saving = false
       this.initMatComponents();
       this.scrollToBottom()
+      this.counts[this.selectedProject] += 1
     })
   }
 
@@ -312,7 +315,10 @@ export class DashboardComponent implements OnInit, AfterViewChecked, AfterViewIn
           projectId: this.selectedProject
         }
       }]
-    }).subscribe(() => this.saving = false)
+    }).subscribe(() => {
+      this.counts[this.selectedProject] -= 1
+      this.saving = false
+    })
   }
 
   getAlarmColor(todo) {
