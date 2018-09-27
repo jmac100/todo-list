@@ -1,7 +1,6 @@
 <nav class="transparent">
   <div class="nav-wrapper">
     <label *ngIf="page === '/todos'" href="#!" class="brand-logo center">{{ profile.userName.split(' ')[0] }}'s To Do List
-      <br> for
       <br> {{ today | date:'fullDate' }}</label>
     <label *ngIf="page === '/projects'" href="#!" class="brand-logo center header">Project Administration</label>
     <a href="#" data-target="mobile-demo" class="sidenav-trigger">

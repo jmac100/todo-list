@@ -12,7 +12,7 @@
   <div *ngIf="!loading" class="row">
     <div *ngIf="projects.length > 1" class="input-field col s12 m6 offset-m6 l3 offset-l9">
       <select [(ngModel)]="selectedProject" (change)="selectedProjectChanged()">
-        <option *ngFor="let project of projects" [value]="project.id">{{ project.title }}</option>
+        <option *ngFor="let project of projects" [value]="project.id">{{ project.title }} <span class="badge">({{ counts[project.id] }})</span></option>
       </select>
       <label>Select a Project</label>
     </div>
@@ -21,60 +21,83 @@
     <div *ngIf="todos">
       <div class="row">
         <div class="col s12 m10 offset-m1">
-            <ul [sortablejs]="items" [sortablejsOptions]="options">
-                <li *ngFor="let todo of todos" id="{{ todo.id }}" class="todo-container">
-                  <div class="row">
-                    <div class="col s1">
-                      <i *ngIf="!todo.complete" [class.disabled]="editId" class="material-icons pointer" (click)="setTodoComplete(todo)">check_box_outline_blank</i>
-                      <i *ngIf="todo.complete" class="material-icons pointer green-text" (click)="setTodoComplete(todo)">check_box</i>
-                    </div>
-                    <div class="col s9 l10 todo" [class.completed]="todo.complete" (click)="setTodoComplete(todo)">
-                      <span *ngIf="todo.id !== editId">{{ todo.title }}</span>
-                      <div *ngIf="todo.id === editId" class="row">
-                        <div class="input-field col s12">
-                          <input type="text" #editTitle [value]="todo.title" placeholder="Edit item..." (keyup.enter)="editTodo(todo.id, editTitle.value)">
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col s2 l1 flex-container-center">
-                      <i materialize="tooltip" *ngIf="!todo.complete && todo.dueDate" id="tip{{todo.id}}" class="material-icons default tooltipped" [ngClass]="getAlarmColor(todo)" attr.data-tooltip="Due Date: {{todo.dueDate}}" data-position="left">alarm</i>
-                      <i *ngIf="!todo.complete && todo.id !== editId" class="material-icons pointer green-text" (click)="toggleEditMode(todo.id)">edit</i>
-                      <i *ngIf="!todo.complete && todo.id === editId" class="material-icons pointer red-text" (click)="toggleEditMode(0)">cancel</i>
-                      <i *ngIf="todo.complete" class="material-icons pointer red-text" (click)="delete(todo)">delete</i>
+          <ul [sortablejs]="items" [sortablejsOptions]="options">
+            <li *ngFor="let todo of todos" id="{{ todo.id }}" class="todo-container">
+              <div class="row">
+                <div class="col s1">
+                  <i *ngIf="!todo.complete" [class.disabled]="editId" class="material-icons pointer" (click)="setTodoComplete(todo)">check_box_outline_blank</i>
+                  <i *ngIf="todo.complete" class="material-icons pointer green-text" (click)="setTodoComplete(todo)">check_box</i>
+                </div>
+                <div class="col s9 l10 todo" [class.completed]="todo.complete" (click)="setTodoComplete(todo)">
+                  <span *ngIf="todo.id !== editId">{{ todo.title }}</span>
+                  <div *ngIf="todo.id === editId" class="row">
+                    <div class="input-field col s12">
+                      <input type="text" #editTitle [value]="todo.title" placeholder="Edit item..." (keyup.enter)="editTodo(todo.id, editTitle.value)">
                     </div>
                   </div>
-                  <ul class="collapsible popout">
-                    <li>
-                      <div class="collapsible-header indigo-text" [class.has-notes]="todo.notes.length > 0 || todo.dueDate">More...</div>
-                      <div class="collapsible-body">
-                        <div class="row">
-                          <div class="input-field col s12">
-                            <textarea #notes id="notes{{todo.id}}" class="materialize-textarea" [value]="todo.notes"></textarea>
-                            <label [class.active]="todo.notes" for="notes">Add notes...</label>
-                          </div>
-                        </div>
-                        <div class="row">
-                          <div class="input-field col s12">
-                              <input #dueDate id="date{{todo.id}}" type="text" class="datepicker" value="{{todo.dueDate}}">
-                              <label [class.active]="todo.dueDate" for="dueDate">Set a Due Date</label>
-                          </div>
-                        </div>
-                        <div class="row">
-                          <div class="col s12 right-align">
-                            <i class="material-icons pointer" (click)="edit(todo.id, notes.value, dueDate.value)">add_circle_outline</i>
-                          </div>
-                        </div>
+                </div>
+                <div class="col s2 l1 flex-container-center">
+                  <i materialize="tooltip" *ngIf="!todo.complete && todo.dueDate" id="tip{{todo.id}}" class="material-icons default tooltipped"
+                    [ngClass]="getAlarmColor(todo)" attr.data-tooltip="Due Date: {{todo.dueDate}}" data-position="left">alarm</i>
+                  <i *ngIf="!todo.complete && todo.id !== editId" class="material-icons pointer green-text" (click)="toggleEditMode(todo.id)">edit</i>
+                  <i *ngIf="!todo.complete && todo.id === editId" class="material-icons pointer red-text" (click)="toggleEditMode(0)">cancel</i>
+                  <i *ngIf="todo.complete" class="material-icons pointer red-text" (click)="delete(todo)">delete</i>
+                </div>
+              </div>
+              <ul class="collapsible popout">
+                <li>
+                  <div class="collapsible-header indigo-text" [class.has-notes]="todo.notes.length > 0 || todo.dueDate">More...</div>
+                  <div class="collapsible-body">
+                    <div class="row">
+                      <div class="input-field col s12">
+                        <textarea #notes id="notes{{todo.id}}" class="materialize-textarea" [value]="todo.notes"></textarea>
+                        <label [class.active]="todo.notes" for="notes">Add notes...</label>
                       </div>
-                    </li>
-                  </ul>
-                  <div class="row">
-                    <div class="col s2 offset-s10 l1 offset-l11 flex-container-center">
-                      {{ todo.ordinal }}
-                      <i class="material-icons my-handle pointer">drag_handle</i>
+                    </div>
+                    <div class="row">
+                      <div class="input-field col s12">
+                        <input #dueDate id="date{{todo.id}}" type="text" class="datepicker" value="{{todo.dueDate}}">
+                        <label [class.active]="todo.dueDate" for="dueDate">Set a Due Date</label>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col s12 right-align">
+                        <i materialize="tooltip" class="material-icons pointer tooltipped modal-trigger" id="copy{{todo.id}}" data-position="top" data-tooltip="Copy to..." (click)="setAction('Copy', todo)" data-target="action">content_copy</i>
+                        <i materialize="tooltip" class="material-icons pointer tooltipped modal-trigger" id="move{{todo.id}}" data-position="top" data-tooltip="Move to..." (click)="setAction('Move', todo)" data-target="action">content_cut</i>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col s12 right-align">
+                        <i class="material-icons pointer" (click)="edit(todo.id, notes.value, dueDate.value)">add_circle_outline</i>
+                      </div>
                     </div>
                   </div>
                 </li>
               </ul>
+              <div class="row">
+                <div class="col s2 offset-s10 l1 offset-l11 flex-container-center">
+                  {{ todo.ordinal }}
+                  <i class="material-icons my-handle pointer">drag_handle</i>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="modal" id="action">
+      <div class="modal-content">
+        <h4>{{ action }} "{{ todo?.title }}" to...</h4>
+      </div>
+      <div>
+        <ul class="collection" *ngIf="projects">
+          <li *ngFor="let project of getProjects()" class="collection-item modal-close" (click)="execAction(project.id)">{{ project.title }}</li>
+        </ul>
+      </div>
+      <div class="row">
+        <div class="input-field col s12 m6 offset-m3">
+          <input type="text" [(ngModel)]="title" (keyup.enter)="addProject()">
+          <label for="item">Add a Project</label>   
         </div>
       </div>
     </div>

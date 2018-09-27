@@ -3,7 +3,7 @@ import { DOCUMENT} from '@angular/common';
 import { Apollo } from "apollo-angular";
 import { map } from "rxjs/operators";
 import * as moment from 'moment';
-import { PageScrollConfig, PageScrollService, PageScrollInstance } from 'ngx-page-scroll';
+import { PageScrollService, PageScrollInstance } from 'ngx-page-scroll';
 
 
 import { CacheService } from "../services";
@@ -14,7 +14,8 @@ import {
   select,
   datePicker,
   setDate,
-  tooltip } from "../../mat";
+  tooltip,
+  modal } from "../../mat";
 import { _ } from 'underscore';
 
 import { Item, Query, Mutation, Project } from "../../api/types";
@@ -33,15 +34,6 @@ import {
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit, AfterViewChecked, AfterViewInit {
-
-  constructor
-    (
-    private apollo: Apollo,
-    private cache: CacheService,
-    private pageScrollService: PageScrollService, 
-    @Inject(DOCUMENT) private document: any
-    ) { }
-
   profile: any
   todos: Item[] = []
   projects: Project[] = []
@@ -51,6 +43,19 @@ export class DashboardComponent implements OnInit, AfterViewChecked, AfterViewIn
   options: any
   editId: string = ''
   selectedProject: string = ''
+  action: string = ''
+  todo: Item = null
+  title: string = ''
+  counts = {}
+
+  constructor
+    (
+      private apollo: Apollo,
+      private cache: CacheService,
+      private pageScrollService: PageScrollService, 
+      @Inject(DOCUMENT) private document: any
+    ) {}
+
 
   ngAfterViewChecked() {
     collapse()
@@ -65,7 +70,10 @@ export class DashboardComponent implements OnInit, AfterViewChecked, AfterViewIn
       this.todos.forEach(todo => {
         resizeTextArea(todo.id)
         datePicker(todo.id)
-        tooltip(todo.id)
+        tooltip(`tip${todo.id}`)
+        tooltip(`copy${todo.id}`)
+        tooltip(`move${todo.id}`)
+        modal()
       })
     }, 500);
   }
@@ -99,6 +107,8 @@ export class DashboardComponent implements OnInit, AfterViewChecked, AfterViewIn
       ).subscribe(projects => {
         this.projects = projects
 
+        projects.forEach(project => this.loadItemCount(project.id))
+
         if (this.projects.length === 0) {
           this.cache.setProject('')
           this.selectedProject = ''
@@ -131,6 +141,15 @@ export class DashboardComponent implements OnInit, AfterViewChecked, AfterViewIn
       })    
   }
 
+  loadItemCount(projectId) {
+    this.apollo.query<Query>({
+      query: itemsQuery,
+      variables: {
+        projectId
+      }
+    }).subscribe(t => this.counts[projectId] = t.data.items.length)
+  }
+
   loadItems() {
     this.apollo.watchQuery<Query>({
       query: itemsQuery,
@@ -143,7 +162,7 @@ export class DashboardComponent implements OnInit, AfterViewChecked, AfterViewIn
         map(res => res.data.items)
       )
       .subscribe(t => {
-        this.todos = t
+        this.todos = t        
         this.loading = false
         select()
 
@@ -176,7 +195,10 @@ export class DashboardComponent implements OnInit, AfterViewChecked, AfterViewIn
           projectId: this.selectedProject
         }
       }]
-    }).subscribe(() => this.saving = false)
+    }).subscribe(() => {
+      this.saving = false
+      this.initMatComponents()
+    })
   }
 
   addItem() {
@@ -307,5 +329,75 @@ export class DashboardComponent implements OnInit, AfterViewChecked, AfterViewIn
   scrollToBottom() {
     let pageScrollInstance: PageScrollInstance = PageScrollInstance.simpleInstance(this.document, '#scrollTarget');
     this.pageScrollService.start(pageScrollInstance);
+  }
+
+  setAction(action, todo) {
+    this.action = action
+    this.todo = todo
+  }
+
+  execAction(projectId) {
+    this.saving = true
+    this.apollo.query<Query>({
+      query: itemsQuery,
+      variables: {
+        projectId
+      }
+    }).subscribe(res => {
+      const ordinal = res.data.items.length ? _.sortBy(res.data.items, 'ordinal').reverse()[0].ordinal + 1 : 1
+      if (this.action === 'Copy' || this.action === 'Move') {
+        this.copy(ordinal, projectId)
+        if (this.action === 'Move') {
+          this.delete(this.todo)
+        }
+      }
+      window.location.href = '/todos'
+    })
+  }
+
+  copy(ordinal, projectId) {
+    this.apollo.mutate<Mutation>({
+      mutation: addItemMutation,
+      variables: {
+        title: this.todo.title,
+        notes: this.todo.notes,
+        complete: false,
+        ordinal: ordinal,
+        ownerId: this.profile.userId,
+        projectId: projectId,
+        dueDate: this.todo.dueDate
+      }
+    }).subscribe()
+  }
+
+  move(ordinal, projectId) {
+    this.apollo.mutate<Mutation>({
+      mutation: editItemMutation,
+      variables: {
+        id: this.todo.id,
+        ordinal,
+        projectId
+      }
+    }).subscribe()
+  }
+
+  addProject() {
+    this.apollo.mutate<Mutation>({
+      mutation: addProjectMutation,
+      variables: {
+        title: this.title,
+        ownerId: this.profile.userId
+      },
+      refetchQueries: [{
+        query: projectsQuery,
+        variables: {
+          ownerId: this.profile.userId
+        }
+      }]
+    }).subscribe(() => this.title = '')
+  }
+
+  getProjects() {
+    return this.projects.filter(project => project.id !== this.selectedProject)
   }
 }

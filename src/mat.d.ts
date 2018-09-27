@@ -6,3 +6,4 @@ export declare function select();
 export declare function datePicker(id);
 export declare function setDate(id, val);
 export declare function tooltip(id);
+export declare function modal();

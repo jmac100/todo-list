@@ -39,5 +39,9 @@ export function setDate(id, val) {
 }
 
 export function tooltip(id) {
-  M.Tooltip.init(document.getElementById(`tip${id}`))
+  M.Tooltip.init(document.getElementById(id))
+}
+
+export function modal() {
+  M.Modal.init(document.querySelectorAll('.modal'));
 }

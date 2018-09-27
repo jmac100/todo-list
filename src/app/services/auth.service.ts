@@ -25,7 +25,11 @@ export class AuthService {
   ) { }
 
   public login(): void {
-    this.auth0.authorize();
+    this.auth0.authorize({
+      theme: {
+        
+      }
+    })
   }
 
   public handleAuthentication(): void {

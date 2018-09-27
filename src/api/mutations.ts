@@ -36,8 +36,8 @@ const addItemMutation = gql`
 `
 
 const editItemMutation = gql`
-  mutation editItem($id: ID!, $title: String, $notes: String, $complete: Boolean, $ordinal: Int, $dueDate: String) {
-    editItem(id: $id, title: $title, notes: $notes, complete: $complete, ordinal: $ordinal, dueDate: $dueDate) {
+  mutation editItem($id: ID!, $title: String, $notes: String, $complete: Boolean, $ordinal: Int, $dueDate: String, $projectId: ID) {
+    editItem(id: $id, title: $title, notes: $notes, complete: $complete, ordinal: $ordinal, dueDate: $dueDate, projectId: $projectId) {
       id
       title
       notes
