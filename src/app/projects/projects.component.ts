@@ -5,7 +5,7 @@ import { sideNav } from "../../mat";
 
 import { Project, Query, Mutation } from '../../api/types';
 import { CacheService } from "../services";
-import { projectsQuery } from '../../api/queries';
+import { projectsQuery, itemsQuery } from '../../api/queries';
 import { addProjectMutation, deleteProjectMutation } from '../../api/mutations';
 
 @Component({
@@ -28,6 +28,7 @@ export class ProjectsComponent implements OnInit {
   loading: boolean = true
   selectedProject: string = ''
   abort: boolean = false
+  counts = {}
 
   ngOnInit() {
     sideNav()
@@ -47,8 +48,18 @@ export class ProjectsComponent implements OnInit {
       )
       .subscribe(projects => {
         this.projects = projects
+        projects.forEach(project => this.loadItemCount(project.id))
         this.loading = false
       })
+  }
+
+  loadItemCount(projectId) {
+    this.apollo.query<Query>({
+      query: itemsQuery,
+      variables: {
+        projectId
+      }
+    }).subscribe(t => this.counts[projectId] = t.data.items.length)
   }
 
   addProject() {
