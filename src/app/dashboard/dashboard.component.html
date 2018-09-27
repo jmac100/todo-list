@@ -12,7 +12,7 @@
   <div *ngIf="!loading" class="row">
     <div *ngIf="projects.length > 1" class="input-field col s12 m6 offset-m6 l3 offset-l9">
       <select [(ngModel)]="selectedProject" (change)="selectedProjectChanged()">
-        <option *ngFor="let project of projects" [value]="project.id">{{ project.title }} <span class="badge">({{ counts[project.id] }})</span></option>
+        <option *ngFor="let project of projects" [value]="project.id">{{ project.title }} <span class="badge">({{counts[project.id]}})</span></option>
       </select>
       <label>Select a Project</label>
     </div>
@@ -76,7 +76,6 @@
               </ul>
               <div class="row">
                 <div class="col s2 offset-s10 l1 offset-l11 flex-container-center">
-                  {{ todo.ordinal }}
                   <i class="material-icons my-handle pointer">drag_handle</i>
                 </div>
               </div>
